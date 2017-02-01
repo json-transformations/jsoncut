@@ -1,0 +1,91 @@
+"""Command-Line Interface."""
+
+import json
+import sys
+
+import click
+from click import argument, option, version_option
+
+from . import core
+from . import exceptions as exc
+from . import highlighter
+
+
+def load_json(ctx, filename):
+    if filename is None:
+        if sys.stdin.isatty():
+            click.echo(ctx.get_usage())
+            click.echo("Try `jsoncut --help' for more information.")
+            sys.exit(0)
+        else:
+            filename = '-'
+    try:
+        with click.open_file(filename) as file_:
+            return json.load(file_)
+    except (EnvironmentError, json.JSONDecodeError) as e:
+        click.echo(exc.default_error_mesg_fmt(e), err=True)
+        sys.exit(1)
+
+
+def cut(data, kwds):
+    kwds_copy = kwds.copy()
+    for key in ('indent', 'jsonfile', 'nocolor'):
+        del kwds_copy[key]
+    try:
+        return core.cut(data, **kwds_copy)
+    except exc.JsonCutError as e:
+        click.echo(e.format_error(), err=True)
+        sys.exit(1)
+
+
+def output(ctx, output, indent, is_json):
+    try:
+        if not is_json:
+            for key in output:
+                click.echo(key)
+        elif output:
+            if sys.stdout.isatty():
+                compact = False
+                indent = 2 if indent is None else indent
+            else:
+                compact = indent is None
+            output = highlighter.format_json(output, compact, indent)
+            if ctx.color and sys.stdout.isatty():
+                output = highlighter.highlight_json(output)
+            click.echo(output)
+    except KeyboardInterrupt:
+        sys.exit(0)
+
+
+@click.command()
+@argument('jsonfile', type=click.Path(readable=True), required=False)
+@option('-r', '--root', 'rootkey', help='set the root of the JSON document')
+@option('-g', '--get', 'getkeys', help='get JSON key-values/elements')
+@option('-G', '--getdefault', 'getdefaults', type=(str, str), multiple=True,
+        help='get (key, default-value); uses default when key is not found')
+@option('-d', '--del', 'delkeys', help='delete JSON keys/indexes')
+@option('-a', '--any', is_flag=True,
+        help='get/del any matching keys; supress key not found errors.')
+@option('-l', '--list', 'listkeys', is_flag=True,
+        help='numbered JSON keys list')
+@option('-i', '--inspect', is_flag=True,
+        help='inspect JSON document; all keys, indexes & types')
+@option('-f', '--fullscan', is_flag=True, help='deep inpections')
+@option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
+@option('-q', '--quotechar', default='"', help='set quoting char for keys')
+@option('-I', '--indent', type=int, help='indent JSON when redirecting')
+@option('-c', '--nocolor', is_flag=True, help='disable syntax highlighting')
+@option('-s', '--slice', 'slice_', is_flag=True, help='disable sequencer')
+@version_option(version='0.1.0', prog_name='JSON Cut')
+@click.pass_context
+def main(ctx, **kwds):
+    """Quickly select or filter out properties in a JSON document."""
+    ctx.color = not kwds['nocolor']
+    data = load_json(ctx, kwds['jsonfile'])
+    results = cut(data, kwds)
+    is_json = not (kwds['listkeys'] or kwds['inspect'])
+    output(ctx, results, kwds['indent'], is_json)
+
+
+if __name__ == '__main__':
+    main()
