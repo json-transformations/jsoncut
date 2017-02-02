@@ -1,42 +1,22 @@
 """JSON Keys core functions.
 
-Selector String: an ordered sequence of one or more reference tokens
-            (keys or indexes) starting with a root-level key/index and
-            ending with a reference to some value within the document.
+JSON Key definition:
+    An ordered sequence of one or more JSON pointer reference tokens
+    (Object member key or array index) starting with a root-level
+    key/index and ending with a reference to some value within the
+    document.
 
+    The last key can optionally be Python slice syntax, where # can
+    zero, a positive or negative integer:
+        ':', '#:', ':#', '#:#', '::#', '#::#', ':#:#' or '#:#:#'
 
-Key = str
-Selector = str
-Selectors = *Keys
+    Keys are joined together by dot characters.
 
-JSON Keys List(str): An ordered sequence of one or more JSON pointer reference
-    tokens (Object member key or array index) starting
-    with a root-level key/index and ending with a reference to some
-    value within the document.
-
-
-The last selector key can be Python slice syntax.
-':', '#:', ':#', '#:#', '::#', '#::#', ':#:#' or '#:#:#'
-Where # can zero, a positive or negative integer
-
-    ['name']
-    ['name', 'last']
-    ['names', '0', 'name', 'last']
-    ['names', '2:5']
-
-Selector: Selector Keys joined together by a dot character.
-
-Examples:
-    name
-    name.last
-    names.0.name.last
-    names.2:5
-
-
-Evaluation of a JSON Pointer begins with a reference to the root
-value of a JSON document and completes with a reference to some value
-within the document.  Each reference token in the JSON Pointer is
-evaluated sequentially.
+    Examples:
+        name
+        name.last
+        names.0.name.last
+        names.2:5
 """
 from copy import deepcopy
 from functools import reduce
@@ -47,7 +27,7 @@ import click
 from . import exceptions as exc
 from .inspector import inspect_json
 from .sequencer import Items
-from .tokenizer import SLICE_RE, parse_keystr, parse_defaults
+from .tokenizer import SLICE_RE, parse_defaults, parse_keystr
 from .treecrawler import find_keys
 
 
