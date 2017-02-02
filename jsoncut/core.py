@@ -426,7 +426,7 @@ def del_items(d, *keylists, any=False, n=0):
     """
     for keylist in keylists:
         try:
-            drop_key(d, *keylist, ignore_key_error=any)
+            drop_key(d, *keylist, no_key_error=any)
         except KeyError as e:
             if not any:
                 kwds = dict(op='del', itemnum=n, data=d, keylist=keylist)
