@@ -1,4 +1,55 @@
-# import json
+"""Inspect JSON.
+
+Examples:
+    >>> d = [{'k1': 1}, {'k2': 2}]
+    >>> for i in inspect_json(d):
+    ...     print(click.utils.strip_ansi(i))
+    ...
+    #    :object(keys=1)
+    #.k1 :number(val=1)
+    #.k2 :number(val=2)
+
+    >>> for i in inspect_json({
+    ...     'null': None, 'true': True, 'false': False,
+    ...     'int': 1, 'float': 1.1,
+    ...     'array': [1], 'object': {'k1': 1}}):
+    ...     print(click.utils.strip_ansi(i))
+    ...
+    array     :array(count=1)
+    array.#   :number(val=1)
+    false     :false
+    float     :number(val=1.1)
+    int       :number(val=1)
+    null      :null
+    object    :object(keys=1)
+    object.k1 :number(val=1)
+    true      :true
+
+    >>> for i in inspect_json([
+    ...     {'k': None}, {'k': True}, {'k': False},
+    ...     {'k': 1}, {'k': []}, {'k': {}}]):
+    ...     print(click.utils.strip_ansi(i))
+    ...
+    #   :object(keys=1)
+    #.k :null | true | false | number(val=1) | array(count=0) | object(keys=0)
+
+    >>> for i in inspect_json([
+    ...   {'str': 'test', 'int': 1, 'float': 1.1, 'array': [1],
+    ...    'object': {'k1': 1}},
+    ...   {'str': 't', 'int': 10, 'float': 0.9, 'array': [1, 2, 3],
+    ...    'object': {'k1': 1, 'k2': 2}}]):
+    ...   print(click.utils.strip_ansi(i))
+    ...
+    #           :object(keys=5)
+    #.array     :array(mincount=1, maxcount=3)
+    #.array.#   :number(minval=1, maxval=3)
+    #.float     :number(minval=0.9, maxval=1.1)
+    #.int       :number(minval=1, maxval=10)
+    #.object    :object(minkeys=1, maxkeys=2)
+    #.object.k1 :number(val=1)
+    #.object.k2 :number(val=2)
+    #.str       :text(minlen=1, maxlen=4)
+"""
 from collections import Mapping, deque, namedtuple
 
 from .sequencer import is_sequence_and_not_str
@@ -11,6 +62,7 @@ MinMax = {i: namedtuple(i, ['min', 'max'])
 
 
 def set_min_max(type_, key, val, types):
+    """Set Min & Max values for type."""
     mm = MinMax[key]
     if type_ not in types:
         types[type_] = mm(val, val)
@@ -20,6 +72,7 @@ def set_min_max(type_, key, val, types):
 
 
 def get_json_type(obj, types):
+    """Determine the JSON value type."""
     if obj is None:
         types['null'] = True
     elif obj is True:
@@ -38,6 +91,7 @@ def get_json_type(obj, types):
 
 
 def fmt_type(type_):
+    """Format the JSON type."""
     key, value = type_
     if key in ('true', 'false', 'null'):
         return key
@@ -49,6 +103,7 @@ def fmt_type(type_):
 
 
 def format_result(keys, nocolor=False, keys_fg='white', types_fg='cyan'):
+    """Format & colorize the inspection results."""
     d = dict(keys)
     fmt_types = [[fmt_type(j) for j in i.items()] for i in d.values()]
     fmt_types = [' | '.join(i) if len(i) > 1 else i[0] for i in fmt_types]
@@ -74,6 +129,7 @@ def get_children(parent, visited, types):
 
 
 def key_crawler(d, nodes=None):
+    """Crawl through keys & indexes."""
     visited, types = set(), dict()
     to_crawl = deque([Node('', d)] if nodes is None else nodes)
     while to_crawl:
@@ -92,4 +148,5 @@ def tree_walker(d):
 
 
 def inspect_json(d):
+    """Inspect JSON, crawl through keys, indexes and display types."""
     return format_result(tree_walker(d))
