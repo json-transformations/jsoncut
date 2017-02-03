@@ -289,6 +289,9 @@ Drop Keys
       ]
     }
 
+Key Ranges
+----------
+
 .. code-block:: console
 
     $ jsoncut.cli -r2 -g23-26,31-
