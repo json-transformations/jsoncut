@@ -294,6 +294,7 @@ Drop Keys
     $ jsoncut.cli -r2 -g23-26,31-
 
 .. code-block:: json
+
     [
       {
         "status": "automatic",
