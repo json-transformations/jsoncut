@@ -2,7 +2,7 @@
 JSON Cut By Example
 ===================
 .. figure:: docs/source/_static/logger.jpg
-   :scale: 35 %
+   :scale: 15 %
    :align: left
 
    a JSON pruning tool
