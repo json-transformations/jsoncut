@@ -289,6 +289,31 @@ Drop Keys
       ]
     }
 
+.. code-block:: console
+
+    $ jsoncut.cli -r2 -g23-26,31-
+
+.. code-block:: json
+    [
+      {
+        "status": "automatic",
+        "time": 1486089565460,
+        "title": "M 1.1 - 4km WNW of Cobb, California",
+        "tsunami": 0,
+        "url": "http://earthquake.usgs.gov/earthquakes/eventpage/nc72759275",
+        "type": "Feature"
+      },
+      {
+        "status": "automatic",
+        "time": 1486088328647,
+        "title": "M 1.5 - 33km NNE of Anchor Point, Alaska",
+        "tsunami": 0,
+        "url": "http://earthquake.usgs.gov/earthquakes/eventpage/ak15193555",
+        "type": "Feature"
+      }
+    ]
+
+
 Inspect JSON document
 ---------------------
 Let's say we know the JSON contains a list of earthquakes, but are not sure
