@@ -1,15 +1,14 @@
 """JSON Tree Crawler.
 
-:param revisit:
-    If True then perform a full-scan of the document crawling
-    through every instance of the same key/path name looking for new
-    objects & keys. If False and the key/path name has already been
-    visited then don't bother crawling through it.
+fullscan/revisit:
+    If True and the root-level is a Sequence then perform a full-scan
+    of the document crawling through every object in the sequence.
+    If False then only crawl through the first object in the sequence.
 
-:param indexes:
+indexes:
     If True then scans each array index for new objects/keys.
 
-.. note::
+note:
     Different nodes can have the same key-path name since sequence
     index numbers are all replaced with a '#' which serves as a
     wildcard character for unique key-path name representation.
