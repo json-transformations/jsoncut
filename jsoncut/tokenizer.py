@@ -21,7 +21,7 @@ from .treecrawler import find_keys
 
 SLICE_RE = re.compile(r'[-\d:]+$')
 UNESCAPED_DOT_RE = re.compile(r'(?<!\\)\.')
-NUMBER_RANGE_RE = re.compile(r'[-:\d]+$')
+NUMBER_RANGE_RE = re.compile(r'[-\d]+$')
 
 csv.register_dialect('JsonKeys', delimiter=',', strict=False,
                      quoting=csv.QUOTE_MINIMAL, doublequote=False,
