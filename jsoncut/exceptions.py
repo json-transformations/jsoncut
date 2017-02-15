@@ -94,12 +94,14 @@ class KeyTypeError(JsonCutError, TypeError):
             '{dashed_line}\n'
             '{error}\n'
             '{dashed_line}\n'
+            'Data Type: {data_type}\n'
             'Operation: {operation}\n'
             'Item #: {item_number}\n'
             'Parsed Key List: {key_list}\n'
         )
         kwds = {
             'error': Color(self.args[0], '*red'),
+            'data_type': Color(str(type(self.data)), 'yellow'),
             'dashed_line': Color('-' * 40, 'yellow'),
             'item_number': Color(self.item_number, 'red'),
             'operation': Color(self.operation, 'red'),
@@ -108,7 +110,7 @@ class KeyTypeError(JsonCutError, TypeError):
         return color_error_mesg(mesg, kwds, nocolor)
 
 
-class IndexOfOfRange(JsonCutError, IndexError):
+class IndexOutOfRange(JsonCutError, IndexError):
     """The index number exceeded the length of the sequence."""
 
     def __init__(self, exc, op=None, itemnum=0, data=None, keylist=None):
@@ -123,7 +125,7 @@ class IndexOfOfRange(JsonCutError, IndexError):
             keylist (List[str]): a list of keys found in the data.
         """
         msg = str(exc)
-        super(KeyNotFound, self).__init__(msg)
+        super(IndexOutOfRange, self).__init__(msg)
         self.operation = op
         self.item_number = itemnum
         self.data = data
@@ -179,6 +181,7 @@ class KeyNotFound(JsonCutError, KeyError):
             '{dashed_line}\n'
             'KeyNotFound: {key_name}\n'
             '{dashed_line}\n'
+            'Data Type{data_type}\n'
             'Operation: {operation}\n'
             'Item #: {item_number}\n'
             'Parsed Key List: {key_list}\n'
@@ -193,6 +196,7 @@ class KeyNotFound(JsonCutError, KeyError):
         kwds = {
             'key_name': Color(key_name, '*red'),
             'dashed_line': Color('-' * 39, 'yellow'),
+            'data_type': Color(str(type(self.data)), 'yellow'),
             'item_number': Color(self.item_number, 'red'),
             'operation': Color(self.operation, 'red'),
             'available_keys': Color(available_keys, 'white'),
