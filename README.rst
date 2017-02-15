@@ -43,7 +43,7 @@ JSON Cut By Example
                                     document; displays keys found, array
                                     locations, JSON types, min & max values,
                                     lengths and/or counts.
-    -q, --doublequote TEXT          Set quoting character used around
+    -q, --quotechar TEXT            Set quoting character used around
                                     command parameters; useful for the Windows
                                     command-console which uses double-quotes
                                     rather than the default single-quotes;
