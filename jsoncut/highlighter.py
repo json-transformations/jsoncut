@@ -39,6 +39,7 @@ def get_style(style=STYLE):
 
 
 def format_json(d, compact=False, indent=2):
+    """Format JSON; compact or indented."""
     separators = (',', ':') if compact else None
     return json.dumps(d, indent=indent, separators=separators)
 
