@@ -3,9 +3,17 @@ from collections import namedtuple
 
 import click
 
-from . import core
+from . import treecrawler
 
 Color = namedtuple('Color', ['val', 'style'])
+
+
+def list_available_keys(data, fg='yellow'):
+    """Generate list of bulleted items."""
+    bullet = click.style('*', fg=fg)
+    keys = treecrawler.find_keys(data)
+    items = ('{bullet} {item}'.format(bullet=bullet, item=i) for i in keys)
+    return '\n'.join(items)
 
 
 def color_error_mesg(fmtstr, kwds, no_color=False):
@@ -145,13 +153,12 @@ class IndexOutOfRange(JsonCutError, IndexError):
             '{dashed_line}\n'
             '{available_keys}\n'
         )
-        available_keys = '\n'.join(list(core.list_keys(self.data)))
         kwds = {
             'index_number': Color(self.args[0], '*red'),
             'dashed_line': Color('-' * 39, 'yellow'),
             'item_number': Color(self.item_number, 'red'),
             'operation': Color(self.operation, 'red'),
-            'available_keys': Color(available_keys, 'white'),
+            'available_keys': Color(list_available_keys(self.data), 'white'),
             'key_list': Color(self.keylist, 'red')
         }
         return color_error_mesg(mesg, kwds, nocolor)
@@ -181,7 +188,9 @@ class KeyNotFound(JsonCutError, KeyError):
             '{dashed_line}\n'
             'KeyNotFound: {key_name}\n'
             '{dashed_line}\n'
-            'Data Type{data_type}\n'
+            '{note}\n'
+            '{dashed_line}\n'
+            'Data Type: {data_type}\n'
             'Operation: {operation}\n'
             'Item #: {item_number}\n'
             'Parsed Key List: {key_list}\n'
@@ -191,15 +200,15 @@ class KeyNotFound(JsonCutError, KeyError):
             '{available_keys}\n'
         )
         name = self.args[0]
-        key_name = name[1:-1] if len(name) > 2 else name
-        available_keys = '\n'.join(list(core.list_keys(self.data)))
         kwds = {
-            'key_name': Color(key_name, '*red'),
+            'key_name': Color(name[1:-1] if len(name) > 2 else name, '*red'),
             'dashed_line': Color('-' * 39, 'yellow'),
             'data_type': Color(str(type(self.data)), 'yellow'),
             'item_number': Color(self.item_number, 'red'),
             'operation': Color(self.operation, 'red'),
-            'available_keys': Color(available_keys, 'white'),
-            'key_list': Color(self.keylist, 'red')
+            'available_keys': Color(list_available_keys(self.data), 'white'),
+            'key_list': Color(self.keylist, 'red'),
+            'note': Color('Note: You can bypass these KeyNotFound errors ' +
+                          'using the jsoncut --any option.', 'cyan')
         }
         return color_error_mesg(mesg, kwds, nocolor)
