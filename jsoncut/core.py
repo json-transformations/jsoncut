@@ -468,7 +468,7 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
         slice (bool): when the document root is an array don't iterate
     """
     if rootkey:
-        keylist = parse_keystr(rootkey, data, quotechar)
+        keylist = parse_keystr(rootkey, data, quotechar, None, fullscan)
         data = get_rootkey(data, *keylist[0])
 
     if getkeys or getdefaults or delkeys:
