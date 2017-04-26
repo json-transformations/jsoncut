@@ -59,11 +59,12 @@ def output(ctx, output, indent, is_json):
 
 @click.command()
 @argument('jsonfile', type=click.Path(readable=True), required=False)
-@option('-r', '--root', 'rootkey', help='set the root of the JSON document')
-@option('-g', '--get', 'getkeys', help='get JSON key-values/elements')
+@option('-r', '--root', 'rootkey', help='Set the root of the JSON document')
+@option('-g', '--get', 'getkeys', help='Get JSON key-values and/or elements')
 @option('-G', '--getdefault', 'getdefaults', type=(str, str), multiple=True,
-        help='get (key, default-value); uses default when key is not found')
-@option('-d', '--del', 'delkeys', help='delete JSON keys/indexes')
+        help=('(key, default-value); same as get, except uses a default value'
+              'when the key or index is not found'))
+@option('-d', '--del', 'delkeys', help='delete JSON keys and/or indexes')
 @option('-a', '--any', is_flag=True,
         help='get/del any matching keys; supress key not found errors.')
 @option('-l', '--list', 'listkeys', is_flag=True,
@@ -80,7 +81,8 @@ def output(ctx, output, indent, is_json):
 @click.pass_context
 def main(ctx, **kwds):
     """Quickly select or filter out properties in a JSON document."""
-    ctx.color = not kwds['nocolor']
+    if kwds['nocolor']:
+        ctx.color = False
     data = load_json(ctx, kwds['jsonfile'])
     results = cut(data, kwds)
     is_json = not (kwds['listkeys'] or kwds['inspect'])
