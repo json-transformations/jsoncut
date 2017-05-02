@@ -22,7 +22,12 @@ def load_json(ctx, filename):
     try:
         with click.open_file(filename) as file_:
             return json.load(file_)
-    except (EnvironmentError, json.JSONDecodeError) as e:
+    except EnvironmentError as e:
+        if not sys.stdin.isatty():
+            sys.stdin.read()
+        click.echo(exc.default_error_mesg_fmt(e), err=True)
+        sys.exit(1)
+    except json.JSONDecodeError as e:
         click.echo(exc.default_error_mesg_fmt(e), err=True)
         sys.exit(1)
 
