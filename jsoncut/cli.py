@@ -86,8 +86,7 @@ def output(ctx, output, indent, is_json):
 @click.pass_context
 def main(ctx, **kwds):
     """Quickly select or filter out properties in a JSON document."""
-    if kwds['nocolor']:
-        ctx.color = False
+    ctx.color = False if kwds['nocolor'] else True
     data = load_json(ctx, kwds['jsonfile'])
     results = cut(data, kwds)
     is_json = not (kwds['listkeys'] or kwds['inspect'])
