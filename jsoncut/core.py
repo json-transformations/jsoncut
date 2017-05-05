@@ -25,7 +25,7 @@ from operator import getitem
 import click
 
 from . import exceptions as exc
-from .inspector import inspect_json
+from .inspector import inspect_json, count_arrays
 from .sequencer import Items
 from .tokenizer import SLICE_RE, parse_defaults, parse_keystr
 from .treecrawler import find_keys
@@ -440,7 +440,7 @@ def del_items(d, *keylists, any=False, n=0):
 
 
 def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
-        any=False, listkeys=False, inspect=False, fullpath=False,
+        any=False, listkeys=False, inspect=False, count=False, fullpath=False,
         fullscan=False, quotechar='"', slice_=False):
     """Translate the given user data & parameters into actions.
 
@@ -501,5 +501,7 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
         return inspect_json(data)
     elif listkeys:
         return list_keys(data, fullscan)
+    elif count:
+        return count_arrays(data)
     else:
         return data

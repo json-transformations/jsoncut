@@ -150,3 +150,24 @@ def tree_walker(d):
 def inspect_json(d):
     """Inspect JSON, crawl through keys, indexes and display types."""
     return format_result(tree_walker(d))
+
+
+def format_counts(d, nocolor=False, keys_fg='cyan', vals_fg='white'):
+    """Format & colorize the inspection results."""
+    padding = len(max(d.keys(), key=len))
+    fmt_keys = [i.ljust(padding) for i in d.keys()]
+    fmt_vals = [str(i) for i in d.values()]
+    if not nocolor:
+        fmt_keys = [click.style(i, fg=keys_fg) for i in fmt_keys]
+        fmt_vals = [click.style(i, fg=vals_fg) for i in fmt_vals]
+    for key, val in zip(fmt_keys, fmt_vals):
+        yield key + ' : ' + str(val)
+
+
+def count_arrays(d):
+    is_array = is_sequence_and_not_str
+    if is_array(d):
+        return [len(d)]
+    if isinstance(d, Mapping):
+        counts = {k: len(v) for k, v in d.items() if is_array(v)}
+        return format_counts(counts) if counts else ''

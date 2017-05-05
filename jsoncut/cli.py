@@ -76,11 +76,13 @@ def output(ctx, output, indent, is_json):
         help='numbered JSON keys list')
 @option('-i', '--inspect', is_flag=True,
         help='inspect JSON document; all keys, indexes & types')
+@option('-c', '--count', is_flag=True,
+        help='count elements in top-level JSON arrays')
 @option('-f', '--fullscan', is_flag=True, help='deep inpections')
 @option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
 @option('-q', '--quotechar', default='"', help='set quoting char for keys')
 @option('-I', '--indent', type=int, help='indent JSON when redirecting')
-@option('-c', '--nocolor', is_flag=True, help='disable syntax highlighting')
+@option('-n', '--nocolor', is_flag=True, help='disable syntax highlighting')
 @option('-s', '--slice', 'slice_', is_flag=True, help='disable sequencer')
 @version_option(version='0.2.0', prog_name='JSON Cut')
 @click.pass_context
@@ -89,8 +91,9 @@ def main(ctx, **kwds):
     ctx.color = False if kwds['nocolor'] else True
     data = load_json(ctx, kwds['jsonfile'])
     results = cut(data, kwds)
-    is_json = not (kwds['listkeys'] or kwds['inspect'])
-    output(ctx, results, kwds['indent'], is_json)
+    if results:
+        is_json = not (kwds['listkeys'] or kwds['inspect'] or kwds['count'])
+        output(ctx, results, kwds['indent'], is_json)
 
 
 if __name__ == '__main__':
