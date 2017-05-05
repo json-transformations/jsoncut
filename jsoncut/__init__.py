@@ -8,4 +8,4 @@ from . import tokenizer
 from . import treecrawler
 
 
-__version__ = '0.3.0'
+__version__ = '0.4'
