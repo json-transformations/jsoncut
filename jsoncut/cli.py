@@ -70,7 +70,7 @@ def output(ctx, output, indent, is_json):
         help=('(key, default-value); same as get, except uses a default value'
               'when the key or index is not found'))
 @option('-d', '--del', 'delkeys', help='delete JSON keys and/or indexes')
-@option('-a', '--any', is_flag=True,
+@option('-a', '--any', is_flag=True, default=True,
         help='get/del any matching keys; supress key not found errors.')
 @option('-l', '--list', 'listkeys', is_flag=True,
         help='numbered JSON keys list')
