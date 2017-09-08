@@ -5,7 +5,13 @@ JSON Cut By Example
    :scale: 15 %
    :align: left
 
-   a JSON pruning tool
+   a JSON inspection and pruning tool.
+
+.. figure:: https://github.com/json-transformations/json-transformations.github.io/blob/master/images/jsoncut_earthquakes.gif
+   :scale: 35 %
+   :align: left
+
+   Example of using JSON Cut with earthquake data.
 
 **Python 3 support only**; *jsoncut is not currently supported under Python 2*.
 
