@@ -1,0 +1,142 @@
+{
+  "status":"200",
+  "datetime": "2017-09-09 11:49",
+  "request_type": "3-day Forecast",
+  "list": [
+    {
+      "date": "2017-09-09",
+      "sunrise": "07:04",
+      "sunset": "19:31",
+      "moonrise": "22:07",
+      "moonset": "10:11",
+      "temp_f_min": 81,
+      "temp_f_max": 85,
+      "day": {
+        "humidity_pct": 82,
+        "uv_index": 5,
+        "weather": {
+          "description": "Heavy Rain/Wind",
+          "summary": "Tropical storm conditions likely. Rain showers will bring heavy downpours and strong gusty winds at times.",
+          "icon":"04d"
+        }, "wind": {
+          "speed_ave_mph": 49,
+          "speed_low_mph": 40,
+          "speed_high_mph": 60,
+          "direction": "ENE"
+        }, "rain": {
+          "precip_pct": 100,
+          "low_inches": 1,
+          "high_inches": 2
+        }
+      }, "night": {
+        "humidity_pct": 82,
+        "weather": {
+          "description": "Heavy Rain/Wind",
+          "summary": "Major hurricane conditions likely. Bands of heavy rain containing strong gusty winds at times.",
+          "icon":"04d"
+        }, "wind": {
+          "speed_ave_mph": 120,
+          "speed_low_mph": 115,
+          "speed_mph": 130,
+          "direction": "ENE" 
+        }, "rain": {
+          "precip_pct": 100,
+          "low_inches": 5,
+          "high_inches": 8
+        }
+      }
+    }, {
+      "date": "2017-10-09",
+      "sunrise": "07:04",
+      "sunset": "19:30",
+      "moonrise": "22:51",
+      "moonset": "11:12",
+      "temp_f_min": 79,
+      "temp_f_max": 85,
+      "day": {
+        "humidity_pct": 84,
+        "uv_index": 5,
+        "weather": {
+          "description": "Heavy Rain/Wind",
+          "summary": "Major hurricane conditions likely. Bands of heavy rain containing strong gusty winds at times.",
+          "icon":"04d"
+        }, "wind": {
+          "speed_ave_mph": 117,
+          "speed_low_mph": 115,
+          "speed_mph": 130,
+          "direction": "SE"
+        }, "rain": {
+          "precip_pct": 100,
+          "low_inches": 1,
+          "high_inches": 2
+        }
+      }, "night": {
+        "humidity_pct": 83,
+        "weather": {
+          "description": "Thunderstorms/Wind",
+          "summary": "Tropical storm conditions likely.  Windy with bands of heavy rain showers and thunderstorms.",
+          "icon":"04d"
+        }, "wind": {
+          "speed_ave_mph": 71,
+          "speed_low_mph": 60,
+          "speed_mph": 80,
+          "direction": "SSW" 
+        }, "rain": {
+          "precip_pct": 100,
+          "low_inches": 1,
+          "high_inches": 2
+        }
+      }
+    }, {
+      "date": "2017-11-09",
+      "sunrise": "0705",
+      "sunset": "1929",
+      "moonrise": "2339",
+      "moonset": "1213",
+      "temp_f_min": 77,
+      "temp_f_max": 90,
+      "day": {
+        "humidity_pct": 72,
+        "uv_index": 9,
+        "weather": {
+          "description": "Partly Cloudy/Wind",
+          "summary": "Windy. Mostly cloudy skies will become partly cloudy in the afternoon.",
+          "icon":"03d"
+        }, "wind": {
+          "speed_ave_mph": 16,
+          "speed_low_mph": 10,
+          "speed_high_mph": 20,
+          "direction": "WSW"
+          }, "rain": {
+          "precip_pct": 20,
+          "low_inches": 1,
+          "high_inches": 2
+        }
+      }, "night": {
+        "humidity_pct": 82,
+        "weather": {
+          "description": "Partly cloudy",
+          "summary": "A few clouds.",
+          "icon":"04d"
+        }, "wind": {
+          "speed_ave_mph": 16,
+          "speed_low_mph": 10,
+          "speed_mph": 20,
+          "direction": "WSW" 
+        }, "rain": {
+          "precip_pct": 10,
+          "low_inches": null,
+          "high_inches": null
+        }
+      }
+    }
+  ], "city": {
+    "id": 4164138,
+    "name": "Miami",
+    "coord": {
+      "lat": 25.7743,
+      "lon": -80.1937
+    },
+    "country": "US"
+  }
+}

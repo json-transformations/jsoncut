@@ -1,0 +1,3 @@
+"""
+JSON file flattener
+"""

@@ -1,6 +1,7 @@
 """JSON Keys."""
 from . import core
 from . import exceptions
+from . import flattener
 from . import highlighter
 from . import inspector
 from . import sequencer
