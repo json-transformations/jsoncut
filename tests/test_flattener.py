@@ -67,6 +67,11 @@ def test_flatten_by_keys_all():
 
 
 def test_flatten_by_keys_KeyNotFound():
+    """
+    GIVEN a json-serialized document
+    WHEN the user requests to flatten with a key that does not exist
+    THEN assert jsoncut.exceptions.KeyNotFound is raised
+    """
     with pytest.raises(KeyNotFound):
         flatten_by_keys(SOURCE, keys=['not.a.real.key'])
 
