@@ -66,6 +66,16 @@ def test_flatten_by_keys_all():
     assert flattened == FLAT
 
 
+def test_flatten_by_keys_validList():
+    """
+    GIVEN a json-serialized document
+    WHEN the user requests to flatten and specifies a list of keys
+    THEN assert it flattens only the specified keys
+    """
+    flattened = flatten_by_keys(SOURCE, keys=['city', 'info.geo.long'])
+    assert flattened == {'city': 'jacksonville', 'info.geo.long': -60}
+
+
 def test_flatten_by_keys_KeyNotFound():
     """
     GIVEN a json-serialized document
