@@ -59,7 +59,7 @@ def test_flatten_all():
 def test_flatten_by_keys_all():
     """
     GIVEN a json-serialized document
-    WHEN the user requests to flatten by does not list keys
+    WHEN the user requests to flatten but does not list keys
     THEN assert it flattens the entire document
     """
     flattened = flatten_by_keys(SOURCE)
