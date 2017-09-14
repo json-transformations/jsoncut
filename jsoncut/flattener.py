@@ -24,9 +24,10 @@ from . import exceptions as exc                     # may not need
 
 def flatten_all(d):
     """
-    Flattens the entire json-serialized document in the jsoncut list format
-    :param d: = json-serialized document converted to a python dict
-    :return: a flat dict with each key being in the jsoncut style
+    Flattens the entire json-serialized document in the jsoncut list format.
+
+    :param d: = json-serialized document converted to a python dict.
+    :return: a flat dict with each key being in the jsoncut style.
 
     Example:
     d = {'key1': 'item1', 'key2': {'key3': 'item3'}}
@@ -38,10 +39,11 @@ def flatten_all(d):
 def flatten_by_keys(d, keys=None):
     """
     Flattens the specified keys in the json-serialized document.
-    :param d: json-serialized document converted to a python dict
+
+    :param d: json-serialized document converted to a python dict.
     :param keys: singleton or list of jsoncut-style keys.  If not specified, or
-                 set to None, the entire document is flattened.
-    :return: a dictionary with the flattened content
+        set to None, the entire document is flattened.
+    :return: a dictionary with the flattened content.
 
     Example:
     d = {'key1': 'item1', 'key2': {'key3': 'item3'}}
@@ -52,20 +54,43 @@ def flatten_by_keys(d, keys=None):
     if keys == None:
         keys = find_keys(d)
     for key in keys:
-        get_key_content(d, key, flattened)
+        content = get_key_content(d, key)
+        if content is not None:
+            flattened[key] = content
     return flattened
 
 
-def get_key_content(source, key, destination):
+def generate_rows(d, root_key, prepend_keys=None):
+    """
+    Generator function that generates rows of data from multiple entries in
+    the root_key, with the option to prepend columns.
+
+    :param d: json-serialized document converted to a python dict.
+    :param root_key: jsoncut-style key that specifies the root where all data
+        is to be collected for the rows.
+    :param prepend_keys: optional list of jsoncut-style keys that will prepend
+        the data rows.
+    :return: generates a dict for each row
+    """
+    rows = {}
+    prepend = None
+    if prepend_keys:
+        prepend = flatten_by_keys(d, prepend_keys)
+        row.update(prepend)
+
+    pass
+
+
+def get_key_content(source, key):
     """
     Utility function that returns the content of a jsoncut-style key.
     If the content is another dictionary, then the key is incomplete and does
     not set content in the destination dictionary.
-    :param source: source dict created from json document
-    :param key: a jsoncut style key
-    :param destination: dict used by calling-function to load result into
+
+    :param source: json-serialized document converted to a python dict.
+    :param key: a jsoncut style key.
     :raises: jsoncut.exceptions.KeyNotFound via jsoncut.core.get_items()
-             if invalid key
+        if invalid key.
 
     Example:
     source = {'key1': 'item1', 'key2': {'key3': 'item3'}}
@@ -74,4 +99,5 @@ def get_key_content(source, key, destination):
     """
     items = get_items(source, key.split('.'), fullpath=True)
     if not isinstance(items[key], dict):
-        destination[key] = items[key]
+        return items[key]
+    return None

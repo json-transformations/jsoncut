@@ -44,7 +44,7 @@ FLAT = {'city': 'jacksonville',
 
 def test_flatten_all():
     """
-    GIVEN a json-serialized document
+    GIVEN a json-serialzed document converted to a python dict
     WHEN the user requests to flatten the entire document
     THEN assert is it flattened and in the correct format
     """
@@ -58,7 +58,7 @@ def test_flatten_all():
 
 def test_flatten_by_keys_all():
     """
-    GIVEN a json-serialized document
+    GIVEN a json-serialzed document converted to a python dict
     WHEN the user requests to flatten but does not list keys
     THEN assert it flattens the entire document
     """
@@ -68,7 +68,7 @@ def test_flatten_by_keys_all():
 
 def test_flatten_by_keys_validList():
     """
-    GIVEN a json-serialized document
+    GIVEN a json-serialzed document converted to a python dict
     WHEN the user requests to flatten and specifies a list of keys
     THEN assert it flattens only the specified keys
     """
@@ -78,12 +78,23 @@ def test_flatten_by_keys_validList():
 
 def test_flatten_by_keys_KeyNotFound():
     """
-    GIVEN a json-serialized document
+    GIVEN a json-serialzed document converted to a python dict
     WHEN the user requests to flatten with a key that does not exist
     THEN assert jsoncut.exceptions.KeyNotFound is raised
     """
     with pytest.raises(KeyNotFound):
         flatten_by_keys(SOURCE, keys=['not.a.real.key'])
+
+
+##############################################################################
+# TESTS generate_rows
+##############################################################################
+
+
+
+
+
+
 
 
 ##############################################################################
@@ -99,12 +110,19 @@ def test_flatten_by_keys_KeyNotFound():
     'info.geo.long',])
 def test_get_content_validKey(key):
     """
-    GIVEN a json-serialzed document
-    WHEN the user requests to flatten one jsoncut-style key
-    THEN assert only that key is returned as a dictionary
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests the value of a jsoncut-style key
+    THEN assert only that key is returned
     """
-    destination = {}
-    get_key_content(SOURCE, key, destination)
-    assert destination == {key : FLAT[key]}
+    content = get_key_content(SOURCE, key)
+    assert content == FLAT[key]
 
 
+def test_get_content_invalidKey():
+    """
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests to flatten an invalid key
+    THEN assert jsoncut.exceptions.KeyNotFound is raised
+    """
+    with pytest.raises(KeyNotFound):
+        get_key_content(SOURCE, 'not.a.real.key')
