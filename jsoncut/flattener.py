@@ -7,7 +7,8 @@ format.
 Functions:
     1.  flatten_all -> flatten the entire document
     2.  flatten_by_keys -> only flatten user-specified keys
-    3.
+    3.  generate_rows -> create rows of data from the json document for use
+        as a dataframe or for other data analysis uses
 
 TODO:
     1.  flatten using slice operator (i.e. only partial arrays, etc.)
@@ -63,22 +64,41 @@ def flatten_by_keys(d, keys=None):
 def generate_rows(d, root_key, prepend_keys=None):
     """
     Generator function that generates rows of data from multiple entries in
-    the root_key, with the option to prepend columns.
+    the root_key, with the option to prepend columns.  Useful when waning to
+    create dataframes, or rows to export to a CSV file for data analysis.
 
     :param d: json-serialized document converted to a python dict.
     :param root_key: jsoncut-style key that specifies the root where all data
         is to be collected for the rows.
     :param prepend_keys: optional list of jsoncut-style keys that will prepend
-        the data rows.
+        the data rows, such as data that is not part of the root_key data.
     :return: generates a dict for each row
-    """
-    rows = {}
-    prepend = None
-    if prepend_keys:
-        prepend = flatten_by_keys(d, prepend_keys)
-        row.update(prepend)
 
-    pass
+    Example:
+    d = {'key1': 'item1', 'key2': [{'date':'today'}, {'date': 'tomorrow'}]}
+    root_key = 'key2'
+    prepend_keys = ['key1']
+    yield:
+        {'key1':'item1', 'date': 'today'}
+        {'key1':'item1', 'date': 'tomorrow'}
+    """
+    # add prepended data if requested
+    prepend_data = {}
+    if prepend_keys is not None:
+        for prepend_key in prepend_keys:
+            prepend_data[prepend_key] = get_key_content(d, prepend_key)
+
+    # get the content and create individual rows
+    content_array = get_items(d, [root_key], fullpath=True)
+    for item in content_array[root_key]:
+        row = {}
+        row.update(prepend_data)
+        keys = find_keys(item)
+        for key in keys:
+            content = get_key_content(item, key)
+            if content is not None:
+                row[key] = get_key_content(item, key)
+        yield row
 
 
 def get_key_content(source, key):
@@ -89,13 +109,15 @@ def get_key_content(source, key):
 
     :param source: json-serialized document converted to a python dict.
     :param key: a jsoncut style key.
+    :return: the value stored in the given key, or None if the value is
+        another dict, indicating the key is not specific enough.
     :raises: jsoncut.exceptions.KeyNotFound via jsoncut.core.get_items()
         if invalid key.
 
     Example:
     source = {'key1': 'item1', 'key2': {'key3': 'item3'}}
     key = 'key2.key3'
-    results in destination['key2.key3'] = 'item3'
+    returns 'item3'
     """
     items = get_items(source, key.split('.'), fullpath=True)
     if not isinstance(items[key], dict):

@@ -6,6 +6,7 @@ import pytest
 
 from jsoncut.flattener import flatten_all
 from jsoncut.flattener import flatten_by_keys
+from jsoncut.flattener import generate_rows
 from jsoncut.flattener import get_key_content
 from jsoncut.exceptions import KeyNotFound
 
@@ -36,6 +37,67 @@ FLAT = {'city': 'jacksonville',
         'info.geo.lat': 34,
         'info.geo.long': -60,
         }
+
+MINI_FORECAST = {
+  "datetime": "2017-09-09 11:49",
+  "list": [
+    {
+      "date": "2017-09-09",
+      "temp_f_min": 81,
+      "temp_f_max": 85,
+      "day": {
+        "humidity_pct": 82,
+        "uv_index": 5,
+        "wind": {
+          "direction": "ENE"
+        },
+      },
+    },
+    {
+      "date": "2017-10-09",
+      "temp_f_min": 79,
+      "temp_f_max": 85,
+      "day": {
+        "humidity_pct": 84,
+        "uv_index": 5,
+        "wind": {
+          "direction": "SE"
+        },
+      },
+    },
+  ], "city": {
+    "id": 4164138,
+    "name": "Miami",
+    "coord": {
+      "lat": 25.7743,
+      "lon": -80.1937
+    },
+    "country": "US"
+  }
+}
+
+FORECAST_ROWS = [
+    {"city.name": "Miami",
+     "city.coord.lat": 25.7743,
+     "city.coord.lon": -80.1937,
+     "date": "2017-09-09",
+     "temp_f_min": 81,
+     "temp_f_max": 85,
+     "day.humidity_pct": 82,
+     "day.uv_index": 5,
+     "day.wind.direction": "ENE"
+     },
+    {"city.name": "Miami",
+     "city.coord.lat": 25.7743,
+     "city.coord.lon": -80.1937,
+     "date": "2017-10-09",
+     "temp_f_min": 79,
+     "temp_f_max": 85,
+     "day.humidity_pct": 84,
+     "day.uv_index": 5,
+     "day.wind.direction": "SE"
+    },
+    ]
 
 
 ##############################################################################
@@ -90,10 +152,20 @@ def test_flatten_by_keys_KeyNotFound():
 # TESTS generate_rows
 ##############################################################################
 
+def test_generate_rows():
+    """
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests to generate rows of data items with prepended
+        sources
+    THEN assert the rows are generated
+    """
+    row = generate_rows(MINI_FORECAST, 'list', ['city.name',
+        'city.coord.lat', 'city.coord.lon'])
+    assert next(row) == FORECAST_ROWS[0]
+    assert next(row) == FORECAST_ROWS[1]
 
 
-
-
+## NEED MORE TESTS HERE
 
 
 
@@ -126,3 +198,13 @@ def test_get_content_invalidKey():
     """
     with pytest.raises(KeyNotFound):
         get_key_content(SOURCE, 'not.a.real.key')
+
+
+def test_get_content_keyValisDict():
+    """
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests to flatten an key whose value is another dict
+    THEN assert None is returned
+    """
+    content = get_key_content(SOURCE, 'data')
+    assert content == None
