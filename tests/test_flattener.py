@@ -14,90 +14,76 @@ from jsoncut.exceptions import KeyNotFound
 # SAMPLE DATA
 ##############################################################################
 
-SOURCE =  {'city': 'jacksonville',
-           'data': {'temp': 90,
-                    'humidity': 10},
-           'info': {'geo': {'lat': 34,
-                            'long':-60,
-                            },
-                    'bordering': ['Georgia',
-                                  'Alabama',
-                                  'Mississippi',
-                                  ],
-                    },
-            }
-
-FLAT = {'city': 'jacksonville',
-        'data.humidity': 10,
-        'data.temp': 90,
-        'info.bordering': ['Georgia',
-                           'Alabama',
-                          'Mississippi',
-                          ],
-        'info.geo.lat': 34,
-        'info.geo.long': -60,
-        }
-
-MINI_FORECAST = {
-  "datetime": "2017-09-09 11:49",
-  "list": [
-    {
-      "date": "2017-09-09",
-      "temp_f_min": 81,
-      "temp_f_max": 85,
-      "day": {
-        "humidity_pct": 82,
-        "uv_index": 5,
-        "wind": {
-          "direction": "ENE"
+SOURCE = {
+    'city': 'jacksonville',
+    'date': '2017-09-15',
+    'coord': {
+        'lat': 34,
+        'lon': -80,
+    },
+    'forecast': [{
+        'day': 'Monday',
+        'temp': {
+            'hi': 80,
+            'low': 70,
         },
-      },
-    },
-    {
-      "date": "2017-10-09",
-      "temp_f_min": 79,
-      "temp_f_max": 85,
-      "day": {
-        "humidity_pct": 84,
-        "uv_index": 5,
-        "wind": {
-          "direction": "SE"
+        'wind': {
+            'mph': 12,
+            'direction': 'ENE',
         },
-      },
-    },
-  ], "city": {
-    "id": 4164138,
-    "name": "Miami",
-    "coord": {
-      "lat": 25.7743,
-      "lon": -80.1937
-    },
-    "country": "US"
-  }
-}
-
-FORECAST_ROWS = [
-    {"city.name": "Miami",
-     "city.coord.lat": 25.7743,
-     "city.coord.lon": -80.1937,
-     "date": "2017-09-09",
-     "temp_f_min": 81,
-     "temp_f_max": 85,
-     "day.humidity_pct": 82,
-     "day.uv_index": 5,
-     "day.wind.direction": "ENE"
-     },
-    {"city.name": "Miami",
-     "city.coord.lat": 25.7743,
-     "city.coord.lon": -80.1937,
-     "date": "2017-10-09",
-     "temp_f_min": 79,
-     "temp_f_max": 85,
-     "day.humidity_pct": 84,
-     "day.uv_index": 5,
-     "day.wind.direction": "SE"
+    },{
+        'day': 'Tuesday',
+        'temp': {
+            'hi': 82,
+            'low': 71,
+        },
+        'wind': {
+            'mph': 13,
+            'direction': 'S',
+        },
     },
     ]
+}
+
+SOURCE_FLAT = {
+    'city': 'jacksonville',
+    'date': '2017-09-15',
+    'coord.lat': 34,
+    'coord.lon': -80,
+    'forecast': [{
+        'day': 'Monday',
+        'temp.hi' : 80,
+        'temp.low' : 70,
+        'wind.mph' : 12,
+        'wind.direction' : 'ENE'
+        },{
+        'day': 'Tuesday',
+        'temp.hi' : 82,
+        'temp.low' : 71,
+        'wind.mph' : 13,
+        'wind.direction' : 'S'
+        },
+    ]
+}
+
+SOURCE_ROWS = [
+    {'city': 'jacksonville',
+     'coord.lat': 34,
+     'coord.lon': -80,
+     'day': 'Monday',
+     'temp.hi': 80,
+     'temp.low': 70,
+     'wind.mph': 12,
+     'wind.direction': 'ENE'},
+    {'city': 'jacksonville',
+     'coord.lat': 34,
+     'coord.lon': -80,
+     'day': 'Tuesday',
+     'temp.hi': 82,
+     'temp.low': 71,
+     'wind.mph': 13,
+     'wind.direction': 'S'},
+]
 
 
 ##############################################################################
@@ -111,7 +97,7 @@ def test_flatten_all():
     THEN assert is it flattened and in the correct format
     """
     flattened = flatten_all(SOURCE)
-    assert flattened == FLAT
+    assert flattened == SOURCE_FLAT
 
 
 ##############################################################################
@@ -125,7 +111,7 @@ def test_flatten_by_keys_all():
     THEN assert it flattens the entire document
     """
     flattened = flatten_by_keys(SOURCE)
-    assert flattened == FLAT
+    assert flattened == SOURCE_FLAT
 
 
 def test_flatten_by_keys_validList():
@@ -134,8 +120,8 @@ def test_flatten_by_keys_validList():
     WHEN the user requests to flatten and specifies a list of keys
     THEN assert it flattens only the specified keys
     """
-    flattened = flatten_by_keys(SOURCE, keys=['city', 'info.geo.long'])
-    assert flattened == {'city': 'jacksonville', 'info.geo.long': -60}
+    flattened = flatten_by_keys(SOURCE, keys=['city', 'coord.lat'])
+    assert flattened == {'city': 'jacksonville', 'coord.lat': 34}
 
 
 def test_flatten_by_keys_KeyNotFound():
@@ -159,13 +145,34 @@ def test_generate_rows():
         sources
     THEN assert the rows are generated
     """
-    row = generate_rows(MINI_FORECAST, 'list', ['city.name',
-        'city.coord.lat', 'city.coord.lon'])
-    assert next(row) == FORECAST_ROWS[0]
-    assert next(row) == FORECAST_ROWS[1]
+    row = generate_rows(SOURCE, 'forecast', ['city',
+        'coord.lat', 'coord.lon'])
+    assert next(row) == SOURCE_ROWS[0]
+    assert next(row) == SOURCE_ROWS[1]
 
 
-## NEED MORE TESTS HERE
+def test_generate_rows_invalid_rootkey():
+    """
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests to generate rows of data from an invalid root_key
+    THEN assert jsoncut.exceptions.KeyNotFound is raised
+    """
+    with pytest.raises(KeyNotFound):
+        next(generate_rows(SOURCE, 'bad_key', ['city']))
+
+
+def test_generate_rows_invalid_prependkey():
+    """
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests to generate rows of data from a valid root_key, but
+        with invalid prepend_keys
+    THEN assert jsoncut.exceptions.KeyNotFound is raised
+    """
+    with pytest.raises(KeyNotFound):
+        next(generate_rows(SOURCE, 'forecast', ['bad_key']))
+
+
+## NEED MORE TESTS HERE???
 
 
 
@@ -175,11 +182,9 @@ def test_generate_rows():
 
 @pytest.mark.parametrize('key',
     ['city',
-    'data.humidity',
-    'data.temp',
-    'info.bordering',
-    'info.geo.lat',
-    'info.geo.long',])
+    'date',
+    'coord.lat',
+    'coord.lon',])
 def test_get_content_validKey(key):
     """
     GIVEN a json-serialzed document converted to a python dict
@@ -187,7 +192,7 @@ def test_get_content_validKey(key):
     THEN assert only that key is returned
     """
     content = get_key_content(SOURCE, key)
-    assert content == FLAT[key]
+    assert content == SOURCE_FLAT[key]
 
 
 def test_get_content_invalidKey():
@@ -200,11 +205,11 @@ def test_get_content_invalidKey():
         get_key_content(SOURCE, 'not.a.real.key')
 
 
-def test_get_content_keyValisDict():
+def test_get_content_keyValidDict():
     """
     GIVEN a json-serialzed document converted to a python dict
-    WHEN the user requests to flatten an key whose value is another dict
+    WHEN the user requests to flatten a key whose value is another dict
     THEN assert None is returned
     """
-    content = get_key_content(SOURCE, 'data')
+    content = get_key_content(SOURCE['forecast'][0], 'wind')
     assert content == None

@@ -15,12 +15,9 @@ TODO:
     2.
 """
 
-#from .core import list_keys
 from .core import get_items
 from .tokenizer import SLICE_RE                     # may not need
-from .inspector import inspect_json, count_arrays   # may not need
 from .treecrawler import find_keys
-from . import exceptions as exc                     # may not need
 
 
 def flatten_all(d):
@@ -39,7 +36,9 @@ def flatten_all(d):
 
 def flatten_by_keys(d, keys=None):
     """
-    Flattens the specified keys in the json-serialized document.
+    Flattens the specified keys in the json-serialized document.  If key has
+    an array as the value with more key-value pairs, then each index in the
+    array is flattened, as well.
 
     :param d: json-serialized document converted to a python dict.
     :param keys: singleton or list of jsoncut-style keys.  If not specified, or
@@ -56,8 +55,19 @@ def flatten_by_keys(d, keys=None):
         keys = find_keys(d)
     for key in keys:
         content = get_key_content(d, key)
-        if content is not None:
+
+        # flatten each item in an array, as well.
+        if isinstance(content, list):
+            flattened[key] = []
+            array_content = get_items(d, [key], fullpath=True)
+
+            for item in array_content[key]:
+                array_keys = find_keys(array_content[key])
+                flattened[key].append(flatten_by_keys(item, array_keys))
+
+        elif content is not None:
             flattened[key] = content
+
     return flattened
 
 
