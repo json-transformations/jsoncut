@@ -62,7 +62,7 @@ def flatten_by_keys(d, keys=None):
             array_content = get_items(d, [key], fullpath=True)
 
             for item in array_content[key]:
-                array_keys = find_keys(array_content[key])
+                array_keys = find_keys(item)
                 flattened[key].append(flatten_by_keys(item, array_keys))
 
         elif content is not None:
