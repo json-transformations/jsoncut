@@ -440,8 +440,8 @@ def del_items(d, *keylists, any=False, n=0):
 
 
 def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
-        any=False, listkeys=False, inspect=False, count=False, fullpath=False,
-        fullscan=False, quotechar='"', slice_=False):
+        any=False, listkeys=False, inspect=False, count=False, flatten=None,
+        fullpath=False, fullscan=False, quotechar='"', slice_=False):
     """Translate the given user data & parameters into actions.
 
     This function is effectively the hub/core of JSON cut.
@@ -496,6 +496,12 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
                 del_items(item, *keylists, any=any, n=item_num)
 
         data = data.value
+
+    if flatten:
+        # delayed import to prevent circular importing in the .flattener mod
+        from .flattener import flatten_by_keys
+        if flatten == '0':
+            data = flatten_by_keys(data, keys=None)
 
     if inspect:
         return inspect_json(data)

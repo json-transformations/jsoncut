@@ -78,6 +78,9 @@ def output(ctx, output, indent, is_json):
         help='inspect JSON document; all keys, indexes & types')
 @option('-c', '--count', is_flag=True,
         help='count elements in top-level JSON arrays')
+@option('-F', '--flatten', 'flatten',
+        help='flatten the JSON document for specified keys, flattens all ' +
+        'keys if argument set to 0')
 @option('-f', '--fullscan', is_flag=True, help='deep inpections')
 @option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
 @option('-q', '--quotechar', default='"', help='set quoting char for keys')
