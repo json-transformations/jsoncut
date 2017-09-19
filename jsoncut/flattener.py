@@ -20,6 +20,7 @@ from .tokenizer import SLICE_RE                     # may not need
 from .treecrawler import find_keys
 
 
+
 def flatten_all(d):
     """
     Flattens the entire json-serialized document in the jsoncut list format.
@@ -57,7 +58,7 @@ def flatten_by_keys(d, keys=None):
         content = get_key_content(d, key)
 
         # flatten each item in an array, as well.
-        if isinstance(content, list):
+        if isinstance(content, list) and isinstance(content[0], dict):
             flattened[key] = []
             array_content = get_items(d, [key], fullpath=True)
 
