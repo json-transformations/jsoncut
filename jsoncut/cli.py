@@ -78,6 +78,18 @@ def output(ctx, output, indent, is_json):
         help='inspect JSON document; all keys, indexes & types')
 @option('-c', '--count', is_flag=True,
         help='count elements in top-level JSON arrays')
+@option('-F', '--flatten', 'flatten',
+        help=('Flatten the JSON document for specified keys.  '
+            'Argument is key # (output from `jsoncut -l`).  '
+            'For multiple keys, pass a comma-separated list, i.e. `-F 1,2,3` '
+            '(no spaces).  Flattens all keys if argument set to 0'))
+@option('-R', '--rows', 'rows',
+        help=('Generate flattened row data from specified root key '
+            'number (output of --list).  Optionally prepend each row using '
+            '-P (--prepend) option after -R arg.'))
+@option('-P', '--prepend', 'prepend',
+        help=('Prepend rows with specified key numbers, must be used with '
+            '-R (--rows) option.  Comma-separated arg string.'))
 @option('-f', '--fullscan', is_flag=True, help='deep inpections')
 @option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
 @option('-q', '--quotechar', default='"', help='set quoting char for keys')

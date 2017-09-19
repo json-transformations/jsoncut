@@ -134,6 +134,18 @@ def test_flatten_by_keys_KeyNotFound():
         flatten_by_keys(SOURCE, keys=['not.a.real.key'])
 
 
+def test_flatten_by_keys_valIsList():
+    """
+    GIVEN a json-serialzed document converted to a python dict
+    WHEN the user requests to flatten with a key who's value is an array of
+        non-dict values
+    THEN assert it is flattened appropriately
+    """
+    data = {'key1':'val1', 'key2':{'key3':[1, 2, 3]}}
+    flattened = flatten_by_keys(data)
+    assert flattened == {'key1':'val1', 'key2.key3':[1, 2, 3]}
+
+
 ##############################################################################
 # TESTS generate_rows
 ##############################################################################

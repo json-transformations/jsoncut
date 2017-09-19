@@ -440,8 +440,9 @@ def del_items(d, *keylists, any=False, n=0):
 
 
 def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
-        any=False, listkeys=False, inspect=False, count=False, fullpath=False,
-        fullscan=False, quotechar='"', slice_=False):
+        any=False, listkeys=False, inspect=False, count=False, flatten=None,
+        rows=None, prepend=None, fullpath=False, fullscan=False, quotechar='"',
+        slice_=False):
     """Translate the given user data & parameters into actions.
 
     This function is effectively the hub/core of JSON cut.
@@ -462,6 +463,11 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
             or index does not exist.
         listkeys (bool): enumerated, sorted list all unique JSON Keys.
         inspect (bool): sorted list of all unique JSON Keys.
+        count (bool):
+        flatten (str): flatten specified key numbers (output of --list)
+        rows (str): generate flattened row data from specified root key
+            number (output of --list), optionally prepend each row with
+            specified comma-separated key numbers as second argument
         fullpath (bool): used with get*; include the full key name path.
         fullscan (bool): don't skip previously visited JSON Keys.
         quotechar (str): the quote charcter used around JSON Keys.
@@ -496,6 +502,39 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
                 del_items(item, *keylists, any=any, n=item_num)
 
         data = data.value
+
+    if flatten:
+        # delayed import to prevent circular importing
+        # since .flattener imports from .core, as well
+        from .flattener import flatten_by_keys
+        data_ = Items([data] if slice_ else data)
+        keys = find_keys(data_.value, fullscan)
+
+        if flatten == '0':
+            data = flatten_by_keys(data_.value, keys=None)
+        else:
+            keylists = parse_keystr(flatten, data.items, quotechar, keys)
+            data = flatten_by_keys(data_.value, keys=['.'.join(key) for
+                key in keylists])
+
+    if rows:
+        # delayed import to prevent circular importing
+        # since .flattener imports from .core, as well
+        from .flattener import generate_rows
+        data_ = Items([data] if slice_ else data)
+        keys = find_keys(data_.value, fullscan)
+
+        root_key = '.'.join(parse_keystr(rows, data.items, quotechar,
+            keys)[0])
+
+        if prepend:
+            prepend_keys = ['.'.join(key) for key in parse_keystr(prepend,
+                data.items, quotechar, keys)]
+        else:
+            prepend_keys = None
+
+        row = generate_rows(data_.value, root_key, prepend_keys)
+        data = {item[0]:item[1] for item in enumerate(row)}
 
     if inspect:
         return inspect_json(data)
