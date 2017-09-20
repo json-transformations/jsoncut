@@ -146,6 +146,13 @@ def test_flatten_by_keys_valIsList():
     assert flattened == {'key1':'val1', 'key2.key3':[1, 2, 3]}
 
 
+def test_flatten_by_keys_rootKey():
+    """
+    """
+    flattened = flatten_by_keys(SOURCE, keys=['coord'])
+    assert flattened == {'coord.lat': 34, 'coord.lon': -80}
+
+
 ##############################################################################
 # TESTS generate_rows
 ##############################################################################
@@ -217,11 +224,11 @@ def test_get_content_invalidKey():
         get_key_content(SOURCE, 'not.a.real.key')
 
 
-def test_get_content_keyValidDict():
+def test_get_content_keyValueIsDict():
     """
     GIVEN a json-serialzed document converted to a python dict
     WHEN the user requests to flatten a key whose value is another dict
-    THEN assert None is returned
+    THEN assert a dict is returned
     """
     content = get_key_content(SOURCE['forecast'][0], 'wind')
-    assert content == None
+    assert content == SOURCE['forecast'][0]['wind']

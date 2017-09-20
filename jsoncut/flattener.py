@@ -12,12 +12,12 @@ Functions:
 
 TODO:
     1.  flatten using slice operator (i.e. only partial arrays, etc.)
-    2.
 """
 
 from .core import get_items
 from .tokenizer import SLICE_RE                     # may not need
 from .treecrawler import find_keys
+from . import exceptions as exc
 
 
 
@@ -39,7 +39,8 @@ def flatten_by_keys(d, keys=None):
     """
     Flattens the specified keys in the json-serialized document.  If key has
     an array as the value with more key-value pairs, then each index in the
-    array is flattened, as well.
+    array is flattened, as well.  If the key is a root key with a dict as a
+    value, then recursively flattens that branch.
 
     :param d: json-serialized document converted to a python dict.
     :param keys: singleton or list of jsoncut-style keys.  If not specified, or
@@ -66,8 +67,12 @@ def flatten_by_keys(d, keys=None):
                 array_keys = find_keys(item)
                 flattened[key].append(flatten_by_keys(item, array_keys))
 
-        elif content is not None:
+        elif not isinstance(content, dict):
             flattened[key] = content
+
+        elif isinstance(content, dict):
+            flattened.update({'.'.join([key, k]):v for k,v in
+                flatten_by_keys(content).items()})
 
     return flattened
 
@@ -96,8 +101,7 @@ def generate_rows(d, root_key, prepend_keys=None):
     # add prepended data if requested
     prepend_data = {}
     if prepend_keys is not None:
-        for prepend_key in prepend_keys:
-            prepend_data[prepend_key] = get_key_content(d, prepend_key)
+        prepend_data.update(flatten_by_keys(d, prepend_keys))
 
     # get the content and create individual rows
     content_array = get_items(d, [root_key], fullpath=True)
@@ -105,23 +109,18 @@ def generate_rows(d, root_key, prepend_keys=None):
         row = {}
         row.update(prepend_data)
         keys = find_keys(item)
-        for key in keys:
-            content = get_key_content(item, key)
-            if content is not None:
-                row[key] = get_key_content(item, key)
+        row.update(flatten_by_keys(item, keys))
+
         yield row
 
 
 def get_key_content(source, key):
     """
     Utility function that returns the content of a jsoncut-style key.
-    If the content is another dictionary, then the key is incomplete and does
-    not set content in the destination dictionary.
 
     :param source: json-serialized document converted to a python dict.
     :param key: a jsoncut style key.
-    :return: the value stored in the given key, or None if the value is
-        another dict, indicating the key is not specific enough.
+    :return: the value stored in the given key
     :raises: jsoncut.exceptions.KeyNotFound via jsoncut.core.get_items()
         if invalid key.
 
@@ -131,6 +130,4 @@ def get_key_content(source, key):
     returns 'item3'
     """
     items = get_items(source, key.split('.'), fullpath=True)
-    if not isinstance(items[key], dict):
-        return items[key]
-    return None
+    return items[key]
