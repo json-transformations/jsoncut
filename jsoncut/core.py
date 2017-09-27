@@ -252,7 +252,7 @@ def into_key(*keys, fullpath=False):
     return '.'.join(keys) if fullpath else keys[-1]
 
 
-def get_items(d, *keylists, fullpath=False, any=False, n=0):
+def get_items(d, *keylists, fullpath=False, any=True, n=0):
     """Get multiple nested items from a dict given the keys.
 
     Args:
@@ -287,7 +287,7 @@ def get_items(d, *keylists, fullpath=False, any=False, n=0):
             into = into_key(*keylist, fullpath=fullpath)
             result[into] = select_key(d, *keylist, no_default=True)
         except exc.KeyNotFound as e:
-            if not any:
+            if any:
                 kwds = dict(op='get', itemnum=n, data=d, keylist=keylists)
                 raise exc.KeyNotFound(e, **kwds)
         except exc.IndexOutOfRange as e:
