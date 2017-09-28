@@ -5,6 +5,7 @@ from tests.sample_data import keys_with_dots
 
 TEST_DATA_WITH_DOTS_IN_KEY_NAME = {"dots.in.key.name": {"k1": True}}
 
+
 def test_list_key_name_containing_dots():
     result = list(find_keys(TEST_DATA_WITH_DOTS_IN_KEY_NAME))
     assert result == ['dots\\.in\\.key\\.name', 'dots\\.in\\.key\\.name.k1']
