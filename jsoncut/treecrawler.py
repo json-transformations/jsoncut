@@ -33,7 +33,8 @@ def get_children(parent, visited, revisit, is_array=False):
         children = [('#', i) for i in obj]
     else:
         return []
-    children = [Node('{}.{}'.format(path, k), v) for k, v in children]
+    children = [Node('{}.{}'.format(path, k.replace('.', '\\.')), v)
+                for k, v in children]
     if revisit:
         return children
     return [i for i in children if i.path not in visited]
