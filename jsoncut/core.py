@@ -252,7 +252,7 @@ def into_key(*keys, fullpath=False):
     return '.'.join(keys) if fullpath else keys[-1]
 
 
-def get_items(d, *keylists, fullpath=False, any=False, n=0):
+def get_items(d, *keylists, fullpath=False, any=True, n=0):
     """Get multiple nested items from a dict given the keys.
 
     Args:
