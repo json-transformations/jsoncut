@@ -287,7 +287,7 @@ def get_items(d, *keylists, fullpath=False, any=True, n=0):
             into = into_key(*keylist, fullpath=fullpath)
             result[into] = select_key(d, *keylist, no_default=True)
         except exc.KeyNotFound as e:
-            if any:
+            if not any:
                 kwds = dict(op='get', itemnum=n, data=d, keylist=keylists)
                 raise exc.KeyNotFound(e, **kwds)
         except exc.IndexOutOfRange as e:
