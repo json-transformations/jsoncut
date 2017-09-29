@@ -34,9 +34,6 @@ JSON Cut By Example
                                     path for the destination key name.
     -d, --del TEXT                  Deletes JSON object members and/or array
                                     elements.
-    -a, --any                       Works with --get & --del; instructs
-                                    jsoncut to ignore any key not found
-                                    errors.
     -l, --list                      Generates a numbered list of JSON keys;
                                     crawls through all keys in the 1st
                                     JSON object found; list doesn't crawl
@@ -55,10 +52,8 @@ JSON Cut By Example
                                     rather than the default single-quotes;
                                     elimates having to escape quote
                                     characters around keynames.
-    -I, --indent INTEGER            The default format when redirecting JSON
-                                    output is compact JSON; this option
-                                    instead indents the output for human
-                                    readibility.
+    -C, --compact                   Compacts the JSON output; the default
+                                    value is False
     -c, --nocolor                   Disable syntax highlighting.
     -s, --slice                     Used when the root of the JSON document
                                     is an array; the default is to iterate

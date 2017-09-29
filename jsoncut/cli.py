@@ -91,7 +91,7 @@ def output(ctx, output, indent, is_json):
 @option('-f', '--fullscan', is_flag=True, help='deep inpections')
 @option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
 @option('-q', '--quotechar', default='"', help='set quoting char for keys')
-@option('-I', '--indent', type=int, help='indent JSON when redirecting')
+@option('-C', '--compact', default=False, help='Compacts the JSON output')
 @option('-n', '--nocolor', is_flag=True, help='disable syntax highlighting')
 @option('-s', '--slice', 'slice_', is_flag=True, help='disable sequencer')
 @version_option(version='0.4', prog_name='JSON Cut')
