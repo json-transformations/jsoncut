@@ -34,7 +34,7 @@ def load_json(ctx, filename):
 
 def cut(data, kwds):
     kwds_copy = kwds.copy()
-    for key in ('indent', 'jsonfile', 'nocolor'):
+    for key in ('compact', 'jsonfile', 'nocolor'):
         del kwds_copy[key]
     try:
         return core.cut(data, **kwds_copy)
@@ -43,18 +43,13 @@ def cut(data, kwds):
         sys.exit(1)
 
 
-def output(ctx, output, indent, is_json):
+def output(ctx, output, compact, is_json):
     try:
         if not is_json:
             for key in output:
                 click.echo(key)
         elif output:
-            if sys.stdout.isatty():
-                compact = False
-                indent = 2 if indent is None else indent
-            else:
-                compact = indent is None
-            output = highlighter.format_json(output, compact, indent)
+            output = highlighter.format_json(output, compact, 2)
             if ctx.color and sys.stdout.isatty():
                 output = highlighter.highlight_json(output)
             click.echo(output)
@@ -91,7 +86,7 @@ def output(ctx, output, indent, is_json):
 @option('-f', '--fullscan', is_flag=True, help='deep inpections')
 @option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
 @option('-q', '--quotechar', default='"', help='set quoting char for keys')
-@option('-I', '--indent', type=int, help='indent JSON when redirecting')
+@option('-C', '--compact', default=False, help='Compacts the JSON output')
 @option('-n', '--nocolor', is_flag=True, help='disable syntax highlighting')
 @option('-s', '--slice', 'slice_', is_flag=True, help='disable sequencer')
 @version_option(version='0.4', prog_name='JSON Cut')
