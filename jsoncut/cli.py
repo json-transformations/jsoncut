@@ -82,7 +82,7 @@ def output(ctx, output, indent, is_json):
 @option('-I', '--indent', type=int, help='indent JSON when redirecting')
 @option('-n', '--nocolor', is_flag=True, help='disable syntax highlighting')
 @option('-s', '--slice', 'slice_', is_flag=True, help='disable sequencer')
-@version_option(version='0.4', prog_name='JSON Cut')
+@version_option(version='0.6', prog_name='JSON Cut')
 @click.pass_context
 def main(ctx, **kwds):
     """Quickly select or filter out properties in a JSON document."""
