@@ -34,9 +34,6 @@ JSON Cut By Example
                                     path for the destination key name.
     -d, --del TEXT                  Deletes JSON object members and/or array
                                     elements.
-    -a, --any                       Works with --get & --del; instructs
-                                    jsoncut to ignore any key not found
-                                    errors.
     -l, --list                      Generates a numbered list of JSON keys;
                                     crawls through all keys in the 1st
                                     JSON object found; list doesn't crawl
@@ -125,7 +122,7 @@ Generated Key Numbers
 ---------------------
 .. code-block:: console
 
-     $ http earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson|jsoncut -l
+     $ jsoncut -l quakes.json
       1 bbox
       2 features
       3 metadata
@@ -146,7 +143,7 @@ By Key Number
 
 .. code-block:: console
 
-  $ http earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson|jsoncut -lr2
+  $ jsoncut -lr2 quakes.json
    1 geometry
    2 geometry.coordinates
    3 geometry.type
@@ -185,7 +182,7 @@ Or Key Name
 
 .. code-block:: console
 
-  $ http earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson|jsoncut -lr features
+  $ jsoncut -lr features quakes.json
    1 geometry
    2 geometry.coordinates
    3 geometry.type
@@ -197,7 +194,7 @@ Get Keys
 
 .. code-block:: console
 
-    $ http earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson|jsoncut -r2 -g 2,14,18
+    $ jsoncut -r2 -g 2,14,18 quakes.json
 
 .. code-block:: json
 
@@ -263,7 +260,7 @@ Key Names & Numbers can be Mixed
 
 .. code-block:: console
 
-    jsoncut.cli -r features -g 2,14,18,properties.nst
+    jsoncut -r features -g 2,14,18,properties.nst quakes.json
 
 
 Drop Keys
@@ -271,7 +268,7 @@ Drop Keys
 
 .. code-block:: console
 
-    http earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson|jsoncut -d features
+    jsoncut -d features quakes.json
 
 .. code-block:: json
 
@@ -300,7 +297,7 @@ Key Ranges
 
 .. code-block:: console
 
-    $ jsoncut.cli -r2 -g23-26,31-
+    $ jsoncut -r2 -g23-26,31- quakes.json
 
 .. code-block:: json
 
@@ -334,7 +331,7 @@ array locations and unique keys.  Array indexes are represented by the
 
 .. code-block:: console
 
-  $ http earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson|jsoncut -i
+  $ jsoncut -i quakes.json
   bbox                              :array(count=6)
   bbox.#                            :number(minval=-152.1395, maxval=64.7845)
   features                          :array(count=5)
