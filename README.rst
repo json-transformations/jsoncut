@@ -52,10 +52,8 @@ JSON Cut By Example
                                     rather than the default single-quotes;
                                     elimates having to escape quote
                                     characters around keynames.
-    -I, --indent INTEGER            The default format when redirecting JSON
-                                    output is compact JSON; this option
-                                    instead indents the output for human
-                                    readibility.
+    -C, --compact                   Compacts the JSON output; the default
+                                    value is False
     -c, --nocolor                   Disable syntax highlighting.
     -s, --slice                     Used when the root of the JSON document
                                     is an array; the default is to iterate
