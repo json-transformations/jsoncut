@@ -34,6 +34,8 @@ def load_json(ctx, filename):
 
 def cut(data, kwds):
     kwds_copy = kwds.copy()
+    for key in ('getkeys','delkeys'):
+        kwds_copy[key] = ','.join(kwds_copy[key])
     for key in ('compact', 'jsonfile', 'nocolor'):
         del kwds_copy[key]
     try:
@@ -60,11 +62,11 @@ def output(ctx, output, compact, is_json):
 @click.command()
 @argument('jsonfile', type=click.Path(readable=True), required=False)
 @option('-r', '--root', 'rootkey', help='Set the root of the JSON document')
-@option('-g', '--get', 'getkeys', help='Get JSON key-values and/or elements')
+@option('-g', '--get', 'getkeys', multiple=True, help='Get JSON key-values and/or elements')
 @option('-G', '--getdefault', 'getdefaults', type=(str, str), multiple=True,
         help=('(key, default-value); same as get, except uses a default value'
               'when the key or index is not found'))
-@option('-d', '--del', 'delkeys', help='delete JSON keys and/or indexes')
+@option('-d', '--del', 'delkeys', multiple=True, help='delete JSON keys and/or indexes')
 @option('-l', '--list', 'listkeys', is_flag=True,
         help='numbered JSON keys list')
 @option('-i', '--inspect', is_flag=True,
