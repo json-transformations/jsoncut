@@ -88,7 +88,7 @@ def main(ctx, **kwds):
     results = cut(data, kwds)
     if results:
         is_json = not (kwds['listkeys'] or kwds['inspect'] or kwds['count'])
-        output(ctx, results, kwds['indent'], is_json)
+        output(ctx, results, kwds['compact'], is_json)
 
 
 if __name__ == '__main__':
