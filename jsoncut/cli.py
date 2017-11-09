@@ -66,19 +66,21 @@ def output(ctx, output, compact, is_json):
 @option('-G', '--getdefault', 'getdefaults', type=(str, str), multiple=True,
         help=('(key, default-value); same as get, except uses a default value'
               'when the key or index is not found'))
-@option('-d', '--del', 'delkeys', multiple=True, help='delete JSON keys and/or indexes')
+@option('-d', '--del', 'delkeys', multiple=True, help='Delete JSON keys and/or indexes')
 @option('-l', '--list', 'listkeys', is_flag=True,
-        help='numbered JSON keys list')
+        help='Numbered JSON keys list')
 @option('-i', '--inspect', is_flag=True,
-        help='inspect JSON document; all keys, indexes & types')
+        help='Inspect JSON document; all keys, indexes & types')
 @option('-c', '--count', is_flag=True,
-        help='count elements in top-level JSON arrays')
-@option('-f', '--fullscan', is_flag=True, help='deep inpections')
-@option('-p', '--fullpath', is_flag=True, help='preserve full path for names')
-@option('-q', '--quotechar', default='"', help='set quoting char for keys')
+        help='Count elements in top-level JSON arrays')
+@option('-f', '--fullscan', is_flag=True, help='Deep inspections')
+@option('-p', '--fullpath', is_flag=True, help='Preserve full path for names')
+@option('-q', '--quotechar', default='"', help='Set quoting char for keys')
 @option('-C', '--compact', default=False, help='Compacts the JSON output')
-@option('-n', '--nocolor', is_flag=True, help='disable syntax highlighting')
-@option('-s', '--slice', 'slice_', is_flag=True, help='disable sequencer')
+@option('-n', '--nocolor', is_flag=True, help='Disable syntax highlighting')
+@option('-s', '--slice', 'slice_', is_flag=True, help='Disable sequencer')
+@option('-e', '--expand', is_flag=True,
+        help='Expand key numbers to key names')
 @version_option(version='0.6', prog_name='JSON Cut')
 @click.pass_context
 def main(ctx, **kwds):
