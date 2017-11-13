@@ -9,6 +9,7 @@ from click import argument, option, version_option
 from . import core
 from . import exceptions as exc
 from . import highlighter
+from . import treecrawler
 
 
 def load_json(ctx, filename):
@@ -32,11 +33,84 @@ def load_json(ctx, filename):
         sys.exit(1)
 
 
+def click_options(ctx):
+    '''
+    Build and return a dictionary with the variable name from click
+    and the associated option used from the command line, for each
+    available option defined by the click.option decorator
+    ie. {'rootkey':'root'}
+
+    :param ctx: click context object
+    :return: dictionary
+    '''
+    return {opt.human_readable_name: opt.opts[1]
+            for opt in ctx.command.get_params(ctx)
+            if isinstance(opt, click.Option) and len(opt.opts) > 1}
+
+
+def expand(data, ctx, kwds):
+    '''
+    Return an expanded version of a series of command line arguments,
+    to allow the user to interactively transform data and then see
+    the long version of the same command with any key numbers replaced
+    with their respective key names.
+
+    Examples:
+    jsoncut -e -r2  -g1,2 tests/sample_data/quakes.json
+    to
+    jsoncut --root features --get geometry.coordinates,geometry.type /
+    --quotechar '"' tests/sample_data/quakes.json
+
+    :param data:
+    :param ctx:
+    :param kwds:
+    :return:
+    '''
+
+    if not kwds['rootkey'].isdigit():
+        return []
+
+    expanded_args = [sys.argv[0]]
+    options = click_options(ctx)
+    keylist = treecrawler.find_keys(data)
+
+    if kwds['rootkey']:
+        kwds['rootkey'] = keylist[int(kwds['rootkey'])-1]
+        keylist = treecrawler.find_keys(
+            core.get_rootkey(data, kwds['rootkey']))
+
+    for k, v in kwds.items():
+
+        if k in ['jsonfile', 'expand']:
+            continue
+        if v:
+            value = ''
+            if k == 'quotechar':
+                value = "'" + v + "'"
+            elif k == 'getkeys':
+                values = []
+                # v is a tuple, we need to convert the string to a list
+                # and fin the corresponding expanded value
+                for i in v[0].split(','):
+                    values.append(keylist[int(i)])
+                value = ','.join(values)
+            else:
+                value = v
+
+            arg = options[k] if value is True else options[k] + ' ' + value
+
+            expanded_args.append(arg)
+
+    expanded_args.append(kwds['jsonfile'])
+
+    return [' '.join(expanded_args)]
+
+
 def cut(data, kwds):
     kwds_copy = kwds.copy()
-    for key in ('getkeys','delkeys'):
+    for key in ('getkeys', 'delkeys'):
         kwds_copy[key] = ','.join(kwds_copy[key])
-    for key in ('compact', 'jsonfile', 'nocolor'):
+    for key in ('compact', 'jsonfile', 'nocolor', 'expand'):
         del kwds_copy[key]
     try:
         return core.cut(data, **kwds_copy)
@@ -62,11 +136,13 @@ def output(ctx, output, compact, is_json):
 @click.command()
 @argument('jsonfile', type=click.Path(readable=True), required=False)
 @option('-r', '--root', 'rootkey', help='Set the root of the JSON document')
-@option('-g', '--get', 'getkeys', multiple=True, help='Get JSON key-values and/or elements')
+@option('-g', '--get', 'getkeys', multiple=True,
+        help='Get JSON key-values and/or elements')
 @option('-G', '--getdefault', 'getdefaults', type=(str, str), multiple=True,
         help=('(key, default-value); same as get, except uses a default value'
               'when the key or index is not found'))
-@option('-d', '--del', 'delkeys', multiple=True, help='Delete JSON keys and/or indexes')
+@option('-d', '--del', 'delkeys', multiple=True,
+        help='Delete JSON keys and/or indexes')
 @option('-l', '--list', 'listkeys', is_flag=True,
         help='Numbered JSON keys list')
 @option('-i', '--inspect', is_flag=True,
@@ -91,6 +167,8 @@ def main(ctx, **kwds):
     if results:
         is_json = not (kwds['listkeys'] or kwds['inspect'] or kwds['count'])
         output(ctx, results, kwds['compact'], is_json)
+        if kwds['expand']:
+            output(ctx, expand(data, ctx, kwds), False, False)
 
 
 if __name__ == '__main__':
