@@ -48,6 +48,21 @@ def click_options(ctx):
             if isinstance(opt, click.Option) and len(opt.opts) > 1}
 
 
+def validate_numeric(kwd_value):
+    '''
+    Helper function to verify that the kwd_value is a numeric string.
+    The string could be comma separated, and each individual value is also checked.
+
+    Raises: KeyNotNumeric
+
+    :param kwd_value: string
+    :return: None
+    '''
+
+    for value in kwd_value.split(','):
+        if not value.isdigit():
+            raise exc.KeyNotNumeric(value)
+
 def expand(data, ctx, kwds):
     '''
     Return an expanded version of a series of command line arguments,
@@ -67,8 +82,15 @@ def expand(data, ctx, kwds):
     :return:
     '''
 
-    if not kwds['rootkey'].isdigit():
-        return []
+    # Ensure that these values are all numeric, a requirement for the expand option.
+    try:
+        if kwds['rootkey']:
+            validate_numeric(kwds['rootkey'])
+        if kwds['getkeys']:
+            validate_numeric(kwds['getkeys'][0])
+    except exc.JsonCutError as e:
+        click.echo(e.format_error(), err=True)
+        sys.exit(1)
 
     expanded_args = [sys.argv[0]]
     options = click_options(ctx)
@@ -90,7 +112,7 @@ def expand(data, ctx, kwds):
             elif k == 'getkeys':
                 values = []
                 # v is a tuple, we need to convert the string to a list
-                # and fin the corresponding expanded value
+                # and find the corresponding expanded value
                 for i in v[0].split(','):
                     values.append(keylist[int(i)])
                 value = ','.join(values)
