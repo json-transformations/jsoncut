@@ -469,7 +469,7 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
             specified comma-separated key numbers as second argument
         fullpath (bool): used with get*; include the full key name path.
         fullscan (bool): don't skip previously visited JSON Keys.
-        quotechar (str): the quote charcter used around JSON Keys.
+        quotechar (str): the quote character used around JSON Keys.
         slice (bool): when the document root is an array don't iterate
     """
     if rootkey:

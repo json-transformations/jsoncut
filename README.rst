@@ -60,6 +60,7 @@ JSON Cut By Example
                                     through that array; this option disables
                                     iteratation so that the root-level array
                                     can be sliced.
+    -e, --expand                    Expand key numbers to key names.
     --version                       Show the version and exit.
     --help                          Show this message and exit.
 

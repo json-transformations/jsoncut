@@ -73,6 +73,10 @@ class KeyNumberOutOfRange(JsonCutError, ValueError):
 
     pass
 
+class KeyNotNumeric(JsonCutError, ValueError):
+    """Invalid Non-Numeric Key Type."""
+
+    pass
 
 class KeyTypeError(JsonCutError, TypeError):
     """Attempt to use an index on a Mapping or a key on a Sequence."""
@@ -125,7 +129,7 @@ class IndexOutOfRange(JsonCutError, IndexError):
         """Initialize IndexOutOfRange Exception.
 
         Args:
-            exc (Exception): orignial TypeError excecption.
+            exc (Exception): original TypeError exception.
             op (str): name of operation where the exception occured.
             key (str): the key being operated on.
             itemnum (int): the data item number; if data is a Sequence.
