@@ -48,7 +48,7 @@ def click_options(ctx):
             if isinstance(opt, click.Option) and len(opt.opts) > 1}
 
 
-def validate_numeric(kwd_value):
+def validate_numeric(kwd_value, split_char=','):
     '''
     Helper function to verify that the kwd_value is a numeric string.
     The string could be comma separated, and each individual value is also checked.
@@ -59,7 +59,7 @@ def validate_numeric(kwd_value):
     :return: None
     '''
 
-    for value in kwd_value.split(','):
+    for value in kwd_value.split(split_char):
         if not value.isdigit():
             raise exc.KeyNotNumeric(value)
 
@@ -82,19 +82,25 @@ def expand(data, ctx, kwds):
     :return:
     '''
 
+    expanded_args = [sys.argv[0]]
+    options = click_options(ctx)
+    keylist = treecrawler.find_keys(data)
+
     # Ensure that these values are all numeric, a requirement for the expand option.
     try:
         if kwds['rootkey']:
-            validate_numeric(kwds['rootkey'])
+            validate_numeric(kwds['rootkey'], '.')
+    except exc.JsonCutError as e:
+        expanded_args.append('--root ' + kwds['rootkey'])
+        kwds['rootkey'] = False
+
+    try:
         if kwds['getkeys']:
             validate_numeric(kwds['getkeys'][0])
     except exc.JsonCutError as e:
         click.echo(e.format_error(), err=True)
         sys.exit(1)
 
-    expanded_args = [sys.argv[0]]
-    options = click_options(ctx)
-    keylist = treecrawler.find_keys(data)
 
     if kwds['rootkey']:
         kwds['rootkey'] = keylist[int(kwds['rootkey'])-1]
