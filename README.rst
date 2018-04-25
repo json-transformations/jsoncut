@@ -13,6 +13,12 @@ JSON Cut By Example
 
    Example of using JSON Cut with earthquake data.
 
+`ETL Examples <examples>`_
+==========================
+   Looking for better results from pandas.io.json.json_normalize? This example demonstrates how to use jsoncut to prepare your JSON for cleaner, smaller DataFrames:
+
+   `jsoncut ETL example for pandas <examples/blob/master/jsoncut_ETL_example.ipynb>`_
+
 **Python 3 support only**; *jsoncut is not currently supported under Python 2*.
 
 .. code-block:: console
@@ -26,7 +32,7 @@ JSON Cut By Example
     -r, --root TEXT                 Set the root of the JSON document.
     -g, --get TEXT                  Get JSON object members and/or array
                                     elements.
-    -G, --getdefault <TEXT TEXT>... 
+    -G, --getdefault <TEXT TEXT>...
                                     Same as --get, except provides a default
                                     value to be used when a key/index is not
                                     found (key, default-value)
@@ -69,7 +75,7 @@ Common Usage Scenarios
 -----------------------
 * Point to an array of objects within the JSON document with 'root' and
   use 'get', 'getdefault' or 'del' to operate on each object.
-* Use root to get a branch or a value from the document. 
+* Use root to get a branch or a value from the document.
 * Use slice option to extract elements from a JSON array.
 * There are other ways to use it, but these are the most common.
 
