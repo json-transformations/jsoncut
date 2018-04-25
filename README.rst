@@ -17,7 +17,7 @@ JSON Cut By Example
 ==========================
    Looking for better results from pandas.io.json.json_normalize? This example demonstrates how to use jsoncut to prepare your JSON for cleaner, smaller DataFrames:
 
-   `jsoncut ETL example for pandas <examples/blob/master/jsoncut_ETL_example.ipynb>`_
+   `jsoncut ETL example for pandas <examples/jsoncut_ETL_example.ipynb>`_
 
 **Python 3 support only**; *jsoncut is not currently supported under Python 2*.
 
