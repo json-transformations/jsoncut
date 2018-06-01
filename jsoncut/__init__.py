@@ -34,6 +34,7 @@ wildcard
 """
 
 from . import core
+from . import errors
 from . import exceptions
 from . import highlighter
 from . import inspector
