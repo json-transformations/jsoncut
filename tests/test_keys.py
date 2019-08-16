@@ -1,7 +1,7 @@
 from jsoncut.core import cut
 from jsoncut.tokenizer import parse_key_name
 from jsoncut.treecrawler import find_keys
-from tests.sample_data import keys_with_dots
+from .sample_data import keys_with_dots
 
 TEST_DATA_WITH_DOTS_IN_KEY_NAME = {"dots.in.key.name": {"k1": True}}
 

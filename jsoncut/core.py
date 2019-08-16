@@ -510,3 +510,19 @@ def cut(data, rootkey=None, getkeys=None, getdefaults=None, delkeys=None,
         return count_arrays(data)
     else:
         return data
+
+
+def listkeys(d):
+    return find_keys(d, fullscan=True)
+
+
+def keynums(d):
+    return dict(enumerate(listkeys(d), 1))
+
+
+def inspectkeys(d):
+    print('\n'.join(inspect_json(d, nocolor=True, array_char='*')))
+
+
+def arraycounts(d):
+    print(count_arrays(d))

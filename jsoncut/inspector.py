@@ -50,7 +50,8 @@ Examples:
     #.object.k2 :number(val=2)
     #.str       :text(minlen=1, maxlen=4)
 """
-from collections import Mapping, deque, namedtuple
+from collections import deque, namedtuple
+from collections.abc import Mapping
 
 from .sequencer import is_sequence_and_not_str
 from .treecrawler import Node
@@ -116,19 +117,19 @@ def format_result(keys, nocolor=False, keys_fg='white', types_fg='cyan'):
         yield key + ' :' + val
 
 
-def get_children(parent, visited, types):
+def get_children(parent, visited, types, array_char='#'):
     """Return a list of child nodes."""
     path, obj = parent
     if isinstance(obj, Mapping):
         children = obj.items()
     elif is_sequence_and_not_str(obj):
-        children = [('#', i) for i in obj]
+        children = [(array_char, i) for i in obj]
     else:
         return []
     return [Node('{}.{}'.format(path, k), v) for k, v in children]
 
 
-def key_crawler(d, nodes=None):
+def key_crawler(d, nodes=None, array_char='#'):
     """Crawl through keys & indexes."""
     visited, types = set(), dict()
     to_crawl = deque([Node('', d)] if nodes is None else nodes)
@@ -136,20 +137,24 @@ def key_crawler(d, nodes=None):
         node = to_crawl.popleft()
         visited.add(node.path)
         types[node.path] = get_json_type(node.obj, types.get(node.path, {}))
-        to_crawl.extend(get_children(node, visited, types))
+        to_crawl.extend(get_children(node, visited, types, array_char))
     return {i: types[i] for i in visited if i}
 
 
-def tree_walker(d):
+def tree_walker(d, array_char='#'):
     """Return a sorted list of keys from a JSON document."""
     seq = is_sequence_and_not_str(d)
-    nodes = None if not seq else get_children(('', d), set(), {})
-    return sorted((k.lstrip('.'), v) for k, v in key_crawler(d, nodes).items())
+    nodes = None if not seq else get_children(('', d), set(), {}, array_char)
+    return sorted(
+        (k.lstrip('.'), v)
+        for k, v in
+        key_crawler(d, nodes, array_char).items()
+    )
 
 
-def inspect_json(d):
+def inspect_json(d, nocolor=False, array_char='#'):
     """Inspect JSON, crawl through keys, indexes and display types."""
-    return format_result(tree_walker(d))
+    return format_result(tree_walker(d, array_char), nocolor)
 
 
 def format_counts(d, nocolor=False, keys_fg='cyan', vals_fg='white'):
@@ -164,10 +169,10 @@ def format_counts(d, nocolor=False, keys_fg='cyan', vals_fg='white'):
         yield key + ' : ' + str(val)
 
 
-def count_arrays(d):
+def count_arrays(d, nocolor=False):
     is_array = is_sequence_and_not_str
     if is_array(d):
-        return [len(d)]
+        return '*: %d' % len(d)
     if isinstance(d, Mapping):
         counts = {k: len(v) for k, v in d.items() if is_array(v)}
-        return format_counts(counts) if counts else ''
+        return format_counts(counts, nocolor) if counts else ''

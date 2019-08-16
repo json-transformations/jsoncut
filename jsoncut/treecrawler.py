@@ -16,7 +16,8 @@ note:
     numbers.
 """
 import re
-from collections import Mapping, deque, namedtuple
+from collections import deque, namedtuple
+from collections.abc import Mapping
 
 from .sequencer import is_sequence_and_not_str
 
@@ -24,13 +25,13 @@ Node = namedtuple('Node', ['path', 'obj'])
 KEY_HEADER = re.compile(r'^(\.#\.|\.#|\.)')
 
 
-def get_children(parent, visited, revisit, is_array=False):
+def get_children(parent, visited, revisit, is_array=False, array_char='#'):
     """Return a list of child nodes."""
     path, obj = parent
     if isinstance(obj, Mapping):
         children = obj.items()
     elif is_array:
-        children = [('#', i) for i in obj]
+        children = [(array_char, i) for i in obj]
     else:
         return []
     children = [Node('{}.{}'.format(path, k.replace('.', '\\.')), v)
@@ -40,7 +41,7 @@ def get_children(parent, visited, revisit, is_array=False):
     return [i for i in children if i.path not in visited]
 
 
-def key_crawler(d, nodes=None, revisit=True):
+def key_crawler(d, nodes=None, revisit=True, array_char='#'):
     """Return sorted set of unique key-paths from a Mapping."""
     visited = set()
     to_crawl = deque([Node('', d)] if nodes is None else nodes)
@@ -49,7 +50,11 @@ def key_crawler(d, nodes=None, revisit=True):
         if revisit or current.path not in visited:
             if current.path and current.path not in visited:
                 visited.add(current.path)
-            to_crawl.extend(get_children(current, visited, revisit))
+            children = get_children(
+                current, visited, revisit,
+                is_array=False, array_char=array_char
+            )
+            to_crawl.extend(children)
     return visited
 
 

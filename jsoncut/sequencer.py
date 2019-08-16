@@ -20,7 +20,7 @@ Examples:
     >>> sequence.value
     ['ITEM1', 'ITEM2']
 """
-from collections import Sequence
+from collections.abc import Sequence
 from copy import deepcopy
 
 

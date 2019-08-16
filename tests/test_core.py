@@ -1,6 +1,6 @@
-"""Test JSON Cut main functions."""
-import jsoncut.core
+from jsoncut import core
 
+"""Test JSON Cut main functions."""
 TEST_DATA = {
     'info': 'test',
     'results': [
@@ -42,6 +42,6 @@ def test_cut():
     rootkey = 'results'
     getkeys = 'id, via.source'
     delkeys = 'source.from.name'
-    result = jsoncut.core.cut(TEST_DATA, rootkey=rootkey, getkeys=getkeys,
+    result = core.cut(TEST_DATA, rootkey=rootkey, getkeys=getkeys,
                               delkeys=delkeys)
     assert result == PRUNED_TEST_DATA

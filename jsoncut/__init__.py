@@ -41,4 +41,6 @@ from . import sequencer
 from . import tokenizer
 from . import treecrawler
 
-__version__ = '0.6'
+from .core import arraycounts, cut, inspectkeys, keynums, listkeys
+
+__version__ = '0.8'
