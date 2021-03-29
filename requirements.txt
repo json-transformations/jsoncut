@@ -1,5 +1,5 @@
 click==7.0
-pygments==2.4.2
+pygments==2.7.4
 pytest
 pytest-cov
 flake8
