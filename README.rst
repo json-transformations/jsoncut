@@ -58,9 +58,11 @@ JSON Cut By Example
                                     rather than the default single-quotes;
                                     elimates having to escape quote
                                     characters around keynames.
+    -c, --count                     Count elements in top-level JSON arrays.
+    -q, --quotechar                 Set quoting char for keys.
     -C, --compact                   Compacts the JSON output; the default
                                     value is False
-    -c, --nocolor                   Disable syntax highlighting.
+    -n, --nocolor                   Disable syntax highlighting.
     -s, --slice                     Used when the root of the JSON document
                                     is an array; the default is to iterate
                                     through that array; this option disables
